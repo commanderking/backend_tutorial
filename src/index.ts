@@ -34,15 +34,6 @@ const main = async () => {
         console.log('server started on localhost:4000');
     })
 
-    const activityRepository = getRepository(Activity);
-
-    // let activity = new Activity();
-
-    // await activityRepository.save(activity);
-
-    let activities = await activityRepository.find();
-    // console.log('activities', activities);
-
 
 }
 
