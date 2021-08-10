@@ -8,6 +8,6 @@
   "entities": ["dist/entities/*.js"],
   "migrations": ["dist/migrations/*.js"],
   "cli": {
-    "migrationsDir": "migration"
+    "migrationsDir": "src/migrations"
   }
 }
