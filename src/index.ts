@@ -6,6 +6,10 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { ActivityResolver } from "./resolvers/activity";
 import firebaseAdmin from "firebase-admin";
+import cors from "cors";
+
+const origin =
+  process.env.NODE_ENV === "development" ? true : "reasonloop.vercel.app";
 
 const main = async () => {
   await createConnection({
@@ -21,6 +25,8 @@ const main = async () => {
   });
 
   const app = await express();
+  app.use(cors({ origin }));
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [ActivityResolver],
