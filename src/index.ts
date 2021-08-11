@@ -1,4 +1,5 @@
 import { createConnection } from "typeorm";
+import "dotenv-safe/config";
 import "reflect-metadata";
 import { Activity } from "./entities/Activity";
 import express from "express";
@@ -14,7 +15,7 @@ const origin =
 const main = async () => {
   await createConnection({
     type: "postgres",
-    database: "reasonloop",
+    url: process.env.DATABASE_URL,
     entities: [Activity],
     // synchronize: process.env.NODE_ENV === "development"
   });
@@ -53,7 +54,7 @@ const main = async () => {
   await apolloServer.start();
   apolloServer.applyMiddleware({ app });
 
-  app.listen(4000, () => {
+  app.listen(process.env.PORT, () => {
     console.log("server started on localhost:4000");
   });
 };
