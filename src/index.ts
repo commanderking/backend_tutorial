@@ -20,6 +20,8 @@ const main = async () => {
       await createConnection({
         type: "postgres",
         url: process.env.DATABASE_URL,
+        username: process.env.DATABASE_USERNAME,
+        password: process.env.DATABASE_PASSWORD,
         entities: [Activity],
         migrations: [path.join(__dirname, "./migrations/*")],
         // synchronize: process.env.NODE_ENV === "development"
