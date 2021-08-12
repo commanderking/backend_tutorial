@@ -32,6 +32,8 @@ const main = async () => {
       retries -= 1;
       console.log(`Attempts remaining: ${retries}`);
       console.log(process.env.DATABASE_URL);
+      console.log(process.env.DATABASE_USERNAME);
+      console.log(process.env.PASSWORD);
       console.log("error", error);
 
       await new Promise((res) => setTimeout(res, 5000));
