@@ -1,0 +1,13 @@
+{
+  "type": "postgres",
+  "host": "db",
+  "port": 5432,
+  "username": "postgres",
+  "password": "",
+  "database": "reasonloop",
+  "entities": ["dist/entities/*.js"],
+  "migrations": ["dist/migrations/*.js"],
+  "cli": {
+    "migrationsDir": "src/migrations"
+  }
+}
