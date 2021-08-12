@@ -12,6 +12,7 @@ COPY yarn.lock ./
 RUN yarn
 
 COPY . .
+COPY ormconfig.docker.json ./ormconfig.json
 # COPY .env.production .env
 
 RUN yarn build

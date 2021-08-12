@@ -8,17 +8,33 @@ import { buildSchema } from "type-graphql";
 import { ActivityResolver } from "./resolvers/activity";
 import firebaseAdmin from "firebase-admin";
 import cors from "cors";
+import path from "path";
 
 const origin =
   process.env.NODE_ENV === "development" ? true : "reasonloop.vercel.app";
 
 const main = async () => {
-  await createConnection({
-    type: "postgres",
-    url: process.env.DATABASE_URL,
-    entities: [Activity],
-    // synchronize: process.env.NODE_ENV === "development"
-  });
+  let retries = 5;
+  while (retries) {
+    try {
+      await createConnection({
+        type: "postgres",
+        url: process.env.DATABASE_URL,
+        entities: [Activity],
+        migrations: [path.join(__dirname, "./migrations/*")],
+        // synchronize: process.env.NODE_ENV === "development"
+      });
+      console.log("connected to postgres");
+      break;
+    } catch (error) {
+      retries -= 1;
+      console.log(`Attempts remaining: ${retries}`);
+      console.log(process.env.DATABASE_URL);
+      console.log("error", error);
+
+      await new Promise((res) => setTimeout(res, 5000));
+    }
+  }
 
   await firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.applicationDefault(),
