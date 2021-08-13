@@ -13,6 +13,9 @@ services:
       - "5432:5432"
   web:
     image: reasonloop
+    environment:
+      // The "db" here matches the postgres image created by docker
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/reasonloop
     depends_on:
       - db
     ports:
