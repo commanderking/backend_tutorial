@@ -9,3 +9,7 @@
 1. docker compose-up
 
 postgres data saved in pgdata
+
+### References
+
+Keeping secrets safe on docker container - https://devops.stackexchange.com/questions/5077/docker-security-risks-passing-secrets-over-environment-variables
