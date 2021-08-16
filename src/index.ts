@@ -8,6 +8,31 @@ import { buildSchema } from "type-graphql";
 import { ActivityResolver } from "./resolvers/activity";
 import cors from "cors";
 import path from "path";
+import jwt from "jsonwebtoken";
+import jwksClient from "jwks-rsa";
+
+const client = jwksClient({
+  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+});
+
+function getKey(header: any, callback: any) {
+  console.log("client", client);
+  client.getSigningKey(header.kid, function (error, key) {
+    if (!key) {
+      callback(null, null);
+      return;
+    }
+    console.log(header.kid);
+    const signingKey = key.getPublicKey();
+    callback(null, signingKey);
+  });
+}
+
+const options = {
+  audience: process.env.AUTH0_AUDIENCE,
+  issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+  algorithms: ["RS256" as const],
+};
 
 const origin =
   process.env.NODE_ENV === "development"
@@ -46,11 +71,39 @@ const main = async () => {
       resolvers: [ActivityResolver],
       validate: false,
     }),
-    context: async ({ req, res }) => {
-      return {
-        req,
-        res,
-      };
+    context: async ({ req }) => {
+      try {
+        // simple auth check on every request
+        const authHeader = req.headers.authorization;
+
+        console.log("authHeader", authHeader);
+
+        if (!authHeader) {
+          return { user: null };
+        }
+
+        const token = authHeader.split(" ")[1];
+        const user = await new Promise((resolve, reject) => {
+          jwt.verify(token, getKey, options, (err, decoded) => {
+            if (err) {
+              return reject(err);
+            }
+            resolve(decoded.email);
+          });
+        });
+
+        const decoded = await user;
+
+        console.log("decoded", decoded);
+        return {
+          user: decoded,
+        };
+      } catch (error) {
+        console.log("error", error);
+        return {
+          user: null,
+        };
+      }
     },
   });
 
