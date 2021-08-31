@@ -10,7 +10,9 @@ import cors from "cors";
 import path from "path";
 
 const origin =
-  process.env.NODE_ENV === "development" ? true : ["reasonloop.vercel.app"];
+  process.env.NODE_ENV === "development"
+    ? true
+    : ["https://parsewise.vercel.app/", "https://www.parsewise.com"];
 
 const main = async () => {
   let retries = 5;
