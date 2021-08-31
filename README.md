@@ -6,7 +6,7 @@
 ### Running on Docker
 
 1. docker build -t reasonloop .
-1. docker compose-up
+1. docker-compose up
 
 postgres data saved in pgdata
 
