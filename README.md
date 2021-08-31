@@ -6,7 +6,12 @@
 ### Running on Docker
 
 1. docker build -t reasonloop .
-1. docker compose-up
+1. docker-compose up
+
+### Pushing to heroku
+
+1. heroku container:push web -a <app_name>
+2. heroku container:push web -a <app_name>
 
 postgres data saved in pgdata
 
