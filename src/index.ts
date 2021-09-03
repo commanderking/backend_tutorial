@@ -18,10 +18,6 @@ const client = jwksClient({
 function getKey(header: any, callback: any) {
   console.log("client", client);
   client.getSigningKey(header.kid, function (error, key) {
-    if (!key) {
-      callback(null, null);
-      return;
-    }
     console.log(header.kid);
     const signingKey = key.getPublicKey();
     callback(null, signingKey);
@@ -83,20 +79,33 @@ const main = async () => {
         }
 
         const token = authHeader.split(" ")[1];
+        console.log("token", token);
         const user = await new Promise((resolve, reject) => {
-          jwt.verify(token, getKey, options, (err, decoded) => {
+          jwt.verify(token, getKey, options, (err, decoded: any) => {
             if (err) {
               return reject(err);
             }
-            resolve(decoded.email);
+            console.log("decoded", decoded);
+            resolve(decoded);
           });
         });
 
-        const decoded = await user;
+        const decoded: any = user;
+
+        // On Auth0 token we add namespaced attributes including information about user's identity
+        // https://auth0.com/docs/configure/apis/scopes/sample-use-cases-scopes-and-claims#add-custom-claims-to-a-token
+        const namespace = "https://parsewise.com";
 
         console.log("decoded", decoded);
+        if (!decoded) {
+          return {
+            user: null,
+          };
+        }
         return {
-          user: decoded,
+          user: {
+            id: decoded[`${namespace}/identities`].user_id,
+          },
         };
       } catch (error) {
         console.log("error", error);
