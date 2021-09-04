@@ -16,9 +16,7 @@ const client = jwksClient({
 });
 
 function getKey(header: any, callback: any) {
-  console.log("client", client);
   client.getSigningKey(header.kid, function (error, key) {
-    console.log(header.kid);
     const signingKey = key.getPublicKey();
     callback(null, signingKey);
   });
@@ -72,20 +70,16 @@ const main = async () => {
         // simple auth check on every request
         const authHeader = req.headers.authorization;
 
-        console.log("authHeader", authHeader);
-
         if (!authHeader) {
           return { user: null };
         }
 
         const token = authHeader.split(" ")[1];
-        console.log("token", token);
         const user = await new Promise((resolve, reject) => {
           jwt.verify(token, getKey, options, (err, decoded: any) => {
             if (err) {
               return reject(err);
             }
-            console.log("decoded", decoded);
             resolve(decoded);
           });
         });
@@ -96,7 +90,6 @@ const main = async () => {
         // https://auth0.com/docs/configure/apis/scopes/sample-use-cases-scopes-and-claims#add-custom-claims-to-a-token
         const namespace = "https://parsewise.com";
 
-        console.log("decoded", decoded);
         if (!decoded) {
           return {
             user: null,
@@ -104,7 +97,8 @@ const main = async () => {
         }
         return {
           user: {
-            id: decoded[`${namespace}/identities`].user_id,
+            id: decoded[`${namespace}/identities`][0].user_id,
+            email: decoded[`${namespace}/email`],
           },
         };
       } catch (error) {
