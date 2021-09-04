@@ -18,3 +18,5 @@ postgres data saved in pgdata
 ### References
 
 Keeping secrets safe on docker container - https://devops.stackexchange.com/questions/5077/docker-security-risks-passing-secrets-over-environment-variables
+
+Secure GraphQL API with Auth0 - https://auth0.com/blog/develop-modern-apps-with-react-graphql-apollo-and-add-authentication-2/
