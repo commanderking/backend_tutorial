@@ -10,6 +10,7 @@ import cors from "cors";
 import path from "path";
 import jwt from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
+import { UserInfo } from "types/auth";
 
 const client = jwksClient({
   jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
@@ -75,7 +76,7 @@ const main = async () => {
         }
 
         const token = authHeader.split(" ")[1];
-        const user = await new Promise((resolve, reject) => {
+        const userInfo: UserInfo = await new Promise((resolve, reject) => {
           jwt.verify(token, getKey, options, (err, decoded: any) => {
             if (err) {
               return reject(err);
@@ -84,21 +85,16 @@ const main = async () => {
           });
         });
 
-        const decoded: any = user;
-
-        // On Auth0 token we add namespaced attributes including information about user's identity
-        // https://auth0.com/docs/configure/apis/scopes/sample-use-cases-scopes-and-claims#add-custom-claims-to-a-token
-        const namespace = "https://parsewise.com";
-
-        if (!decoded) {
+        if (!userInfo) {
           return {
             user: null,
           };
         }
+
         return {
           user: {
-            id: decoded[`${namespace}/identities`][0].user_id,
-            email: decoded[`${namespace}/email`],
+            id: userInfo["https://parsewise.com/identities"][0].user_id,
+            email: userInfo["https://parsewise.com/email"],
           },
         };
       } catch (error) {
